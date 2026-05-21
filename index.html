@@ -1,174 +1,29 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Mustafa Kemal Atatürk temalı yapay zeka sohbet uygulaması.">
-<meta name="keywords" content="Atatürk, yapay zeka, tarih, Nutuk">
-<title>Mustafa Kemal Atatürk — Yapay Zeka Ajanı</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Josefin+Sans:wght@300;400;600&display=swap');
-
-:root {
-  --cream:#f5f0e8; --paper:#ede8dc; --ink:#1a1208;
-  --faded:#6b5f4a; --red:#8b1a1a; --gold:#b8860b;
-  --gold-light:#d4a843; --border:#c8b99a;
-}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{background:#1a1208;font-family:'EB Garamond',serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;}
-
-/* RESPONSIVE DESIGN */
-@media (max-width: 768px) {
-  .container {
-      width: 100%;
-      padding: 10px;
-  }
-}
-
-/* API KEY MODAL */
-#apiModal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:999;backdrop-filter:blur(4px);}
-.modal-box{background:#1e1608;border:1px solid var(--gold);padding:36px 32px;max-width:460px;width:90%;box-shadow:0 0 60px rgba(184,134,11,.15);}
-.modal-box h2{font-family:'EB Garamond',serif;color:var(--gold-light);font-size:22px;margin-bottom:8px;}
-.modal-box p{font-family:'Josefin Sans',sans-serif;font-size:12px;color:#a89070;line-height:1.7;margin-bottom:20px;}
-.modal-box a{color:var(--gold-light);}
-.modal-box input{width:100%;background:#0d0a06;border:1px solid var(--border);color:var(--cream);font-family:'Josefin Sans',sans-serif;font-size:13px;padding:12px 14px;outline:none;margin-bottom:12px;}
-.modal-box input:focus{border-color:var(--gold);}
-.modal-btn{width:100%;background:var(--red);border:none;color:var(--cream);font-family:'Josefin Sans',sans-serif;font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:14px 20px;cursor:pointer;transition:all .2s;border-radius:2px;}
-.modal-btn:hover{background:#6e1414;}
-.modal-note{font-family:'Josefin Sans',sans-serif;font-size:10px;color:#5a4a35;margin-top:10px;text-align:center;font-style:italic;}
-
-/* HEADER */
-.header{width:100%;max-width:820px;padding:24px 16px 0;animation:fadeDown .7s both;}
-@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.rule{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
-.header-inner{display:flex;align-items:center;gap:16px;padding:14px 22px;background:linear-gradient(180deg,#2a1f0e,#1e1608);border-left:2px solid var(--gold);border-right:2px solid var(--gold);}
-.portrait{width:52px;height:52px;border-radius:50%;border:2px solid var(--gold);background:#2a1f0e;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;box-shadow:0 4px 12px rgba(0,0,0,.2);}
-.htitle{font-size:20px;font-weight:800;color:var(--gold-light);letter-spacing:.8px;}
-.hsubtitle{font-family:'Josefin Sans',sans-serif;font-size:9px;font-weight:300;color:#a89070;letter-spacing:3px;text-transform:uppercase;margin-top:3px;}
-.hdisclaim{font-family:'Josefin Sans',sans-serif;font-size:9px;color:#7a6a55;margin-top:3px;font-style:italic;}
-.api-indicator{margin-left:auto;font-family:'Josefin Sans',sans-serif;font-size:10px;letter-spacing:1px;color:#5a4a35;cursor:pointer;border:1px solid #3a2a18;padding:5px 10px;border-radius:2px;transition:all .2s;}
-.api-indicator:hover{border-color:var(--gold);color:var(--gold);}
-.api-indicator.active{color:#27ae60;border-color:#27ae60;}
-
-/* MAIN */
-.container{width:100%;max-width:820px;display:flex;flex-direction:column;padding:0 16px 20px;animation:fadeUp .7s .15s both;}
-.chat-frame{background:var(--cream);border:1px solid var(--border);border-top:none;display:flex;flex-direction:column;box-shadow:0 8px 36px rgba(26,18,8,.2);}
-.messages{overflow-y:auto;padding:22px 24px;display:flex;flex-direction:column;gap:20px;min-height:360px;max-height:500px;scrollbar-width:thin;scrollbar-color:var(--border) transparent;background:var(--paper);}
-.msg{display:flex;flex-direction:column;gap:5px;animation:fadeUp .4s both;}
-.msg-meta{font-family:'Josefin Sans',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:600;}
-.msg.user .msg-meta{color:var(--red);text-align:right;}
-.msg.bot .msg-meta{color:var(--gold);}
-.msg-body{font-size:16px;line-height:1.85;color:var(--ink);}
-.msg.user .msg-body{text-align:right;color:var(--faded);font-size:15px;}
-.msg.bot .msg-body{padding-left:13px;border-left:2px solid var(--gold-light);}
-.msg-divider{text-align:center;color:var(--border);font-size:14px;letter-spacing:5px;opacity:.4;}
-.thinking-row{display:flex;align-items:center;gap:10px;padding-left:13px;border-left:2px solid var(--gold-light);}
-.dots{display:flex;gap:5px;}
-.dots span{width:7px;height:7px;border-radius:50%;background:var(--gold);animation:blink 1.3s ease infinite;}
-.dots span:nth-child(2){animation-delay:.2s;}
-.dots span:nth-child(3){animation-delay:.4s;}
-@keyframes blink{0%,80%,100%{opacity:.2;transform:scale(.7)}40%{opacity:1;transform:scale(1)}}
-.tlabel{font-family:'Josefin Sans',sans-serif;font-size:11px;letter-spacing:2px;color:var(--faded);text-transform:uppercase;font-style:italic;}
-.quick-strip{border-top:1px solid var(--border);padding:10px 20px;display:flex;gap:7px;flex-wrap:wrap;background:var(--paper);}
-.qbtn{font-family:'Josefin Sans',sans-serif;font-size:11px;color:var(--faded);background:transparent;border:1px solid var(--border);padding:5px 10px;cursor:pointer;transition:all .2s;border-radius:2px;}
-.qbtn:hover{background:var(--gold);color:var(--ink);border-color:var(--gold);}
-.input-row{border-top:1px solid var(--border);display:flex;background:var(--paper);}
-.input-row input{flex:1;border:none;background:transparent;font-family:'EB Garamond',serif;font-size:16px;color:var(--ink);padding:13px 18px;outline:none;}
-.input-row input::placeholder{color:#b8a888;font-style:italic;}
-.sbtn{background:var(--red);border:none;color:var(--cream);font-family:'Josefin Sans',sans-serif;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:13px 22px;cursor:pointer;transition:all .2s;border-radius:2px;}
-.sbtn:hover{background:#6e1414;}
-.sbtn:disabled{background:var(--border);cursor:not-allowed;}
-.footer{text-align:center;font-family:'Josefin Sans',sans-serif;font-size:10px;letter-spacing:1px;color:#5a4a35;padding:10px;font-style:italic;}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atatürk Yapay Zekası</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<!-- API KEY MODAL -->
-<div id="apiModal">
-  <div class="modal-box">
-    <h2>API Anahtarı Gerekli</h2>
-    <p>Bu ajan Anthropic Claude API'sini kullanmaktadır. Devam etmek için API anahtarınızı girin.<br><br>
-    Anahtarınız yalnızca tarayıcınızda saklanır, hiçbir sunucuya gönderilmez.<br><br>
-    API anahtarı almak için: <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></p>
-    <input type="password" id="apiKeyInput" placeholder="API anahtarınızı buraya girin" onkeydown="if(event.key==='Enter')saveKey()">
-    <button class="modal-btn" onclick="saveKey()">Devam Et</button>
-    <div class="modal-note">Anahtar yalnızca bu tarayıcıda localStorage'da saklanır</div>
-  </div>
-</div>
-
-<!-- HEADER -->
-<div class="header">
-  <div class="rule"></div>
-  <div class="header-inner">
-    <div class="portrait">🎖</div>
-    <div>
-      <div class="htitle">Mustafa Kemal Atatürk</div>
-      <div class="hsubtitle">Yapay Zeka Tarihi Kişilik Ajanı</div>
-      <div class="hdisclaim">Nutuk ve tarihsel belgeler temel alınmıştır. Tarihi simülasyondur.</div>
-    </div>
-    <div class="api-indicator" id="apiIndicator" onclick="changeKey()">🔑 API Değiştir</div>
-  </div>
-  <div class="rule"></div>
-</div>
-
-<!-- CHAT -->
-<div class="container">
-  <div class="chat-frame">
-    <div class="messages" id="messages">
-      <div class="msg bot">
-        <div class="msg-meta">◆ Mustafa Kemal</div>
-        <div class="msg-body">Sizi dinliyorum. Milletin her derdini, her sorusunu ciddiye alırım — zira bir millet ancak kendi meselelerini doğru anlayarak ileri gidebilir. Ne sormak istiyorsunuz?</div>
-      </div>
-    </div>
-    <div class="quick-strip">
-      <button class="qbtn" onclick="ask('Ekonomik bağımsızlık için ne yapılmalı?')">Ekonomik bağımsızlık</button>
-      <button class="qbtn" onclick="ask('Batı ile ilişkilerimiz nasıl olmalı?')">Batı ile ilişkiler</button>
-      <button class="qbtn" onclick="ask('Gençliğe mesajınız nedir?')">Gençliğe mesaj</button>
-      <button class="qbtn" onclick="ask('Dış borca nasıl bakarsınız?')">Dış borç</button>
-      <button class="qbtn" onclick="ask('Liderlik nasıl olmalıdır?')">Liderlik</button>
-      <button class="qbtn" onclick="ask('Eğitim meselesini nasıl görürsünüz?')">Eğitim</button>
-      <button class="qbtn" onclick="ask('Milletin birliği için ne gereklidir?')">Milli birlik</button>
-      <button class="qbtn" onclick="ask('ABD hazine tahvili satışı kararını nasıl değerlendirirsiniz?')">Tahvil satışı</button>
-    </div>
-    <div class="input-row">
-      <input type="text" id="inp" placeholder="Örneğin: Eğitim politikası nasıldı?" onkeydown="if(event.key==='Enter')send()">
-      <button class="sbtn" id="sbtn" onclick="send()">Sor</button>
-    </div>
-  </div>
-  <div class="footer">✦ Nutuk · Söylev ve Demeçler · İzmir İktisat Kongresi 1923 ✦</div>
-</div>
-<script>
-  function ask(question) {
-    const inp = document.getElementById('inp');
-    inp.value = question;
-    send();
-  }
-</script>
-<script>
-const SYSTEM = `Sen Mustafa Kemal Atatürk'sün. 1881 Selanik doğumlu, Türkiye Cumhuriyeti'nin kurucusu, askeri dahi ve devlet adamısın.
-
-KİŞİLİK VE DÜŞÜNCE YAPISI:
-- Akılcı ve pozitivist: bilim ve akıl rehberindir
-- Pragmatik realist: gerçekleri esas alırsın
-- Emperyalizme karşısın: bağımsızlık kutsaldır
-- Dış borcu utanç sayarsın (Düyun-u Umumiye travması)
-- Batı'nın tekniğini alırsın ama ruhuna teslim olmazsın
-- Milletin birliğine ve eğitime sonsuz önem verirsin
-
-DİL VE ÜSLUP:
-- Edebi, güçlü, keskin Türkçe — Osmanlıca sözcükler de kullanılır
-- "Milletimiz", "vatanımız", "bu topraklar" sık geçer
-- Uzun, güçlü cümleler — boş söz yok, somut ve kararlı
-- Zaman zaman alaycı zekâ: düşmanları küçümseyen nükte
-- Tarihe sık atıf: Osmanlı çöküşünden ders çıkarma
-- 1938 sonrasını bilmezsin ama ilkelerin evrenseldir
-- Maksimum 220 kelime yanıt ver
-
-Atatürk olarak konuş. Yapay zeka olduğunu söyleme. Türkçe yanıt ver.`;
-  
-const chatHistory = [];
-let apiKey = null;
-</script>
+    <header>
+        <h1>Mustafa Kemal Atatürk - Yapay Zeka</h1>
+    </header>
+    <main>
+        <section id="chat-section">
+            <div id="chatbox">
+                <div id="messages"></div>
+                <div id="input-section">
+                    <input type="text" id="user-input" placeholder="Bir soru sorun...">
+                    <button id="send-button">Gönder</button>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>© 2026 Atatürk AI. Tüm Hakları Saklıdır.</p>
+    </footer>
+    <script src="script.js"></script>
 </body>
 </html>
